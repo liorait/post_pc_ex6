@@ -5,10 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,13 +25,51 @@ public class MainActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    RecyclerView recyclerView = findViewById(R.id.recyclerTodoItemsList); // finds the recycler view
+    //View row_data = findViewById(R.id.toDoTextView);
 
     if (holder == null) {
-      holder = new TodoItemsHolderImpl();
+      holder = new TodoItemsHolderImpl(recyclerView);
     }
+    MainActivity context = this;
+
+    // Create the adapter
+    ToDoAdapterClass adapter = new ToDoAdapterClass();
+    adapter.addTodoListToAdapter(holder.getCurrentItems());
+
+    recyclerView.setAdapter(adapter);
+    recyclerView.setLayoutManager(new LinearLayoutManager(this,
+            RecyclerView.VERTICAL, false));
+
 
     // TODO: implement the specs as defined below
     //    (find all UI components, hook them up, connect everything you need)
+    EditText textInsertTask = findViewById(R.id.editTextInsertTask);
+    FloatingActionButton buttonAddToDoItem = findViewById(R.id.buttonCreateTodoItem);
+
+   adapter.setDeleteListener(new ToDoAdapterClass.DeleteClickListener() {
+     @Override
+     public void onDeleteClick(TodoItem item) {
+       holder.deleteItem(item);
+       adapter.addTodoListToAdapter(holder.getCurrentItems());
+     }
+   });
+
+    buttonAddToDoItem.setOnClickListener(v -> {
+        String textInsertTaskStr = textInsertTask.getText().toString();
+
+        // If the text isn't empty, creates a new todo_ object
+        if (!textInsertTaskStr.equals("")){
+          holder.addNewInProgressItem(textInsertTaskStr);
+          ArrayList<TodoItem> list = holder.getCurrentItems();
+          adapter.addTodoListToAdapter(list);
+          adapter.notifyDataSetChanged();
+         // recyclerView.setAdapter(adapter);
+          //recyclerView.setVisibility(View.VISIBLE);
+          //recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+          textInsertTask.setText("");
+        }
+    });
   }
 }
 

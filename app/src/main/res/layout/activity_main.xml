@@ -15,7 +15,8 @@
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add_task_24dp" />
+        app:srcCompat="@drawable/ic_add_task_24dp"/>
+
 
     <EditText
         android:id="@+id/editTextInsertTask"
@@ -40,8 +41,19 @@
         android:id="@+id/recyclerTodoItemsList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/editTextInsertTask"
+        app:layout_constraintTop_toBottomOf="@+id/screenTextView" />
+
+    <TextView
+        android:id="@+id/screenTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TO-DO List"
+        android:textAlignment="center"
+        android:background="@color/blue_100"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!--TODO:
          There is a UI bug.
