@@ -14,29 +14,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
   public TodoItemsHolder holder = null;
-
+  public ToDoAdapterClass adapter = null;
   @RequiresApi(api = Build.VERSION_CODES.N)
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     RecyclerView recyclerView = findViewById(R.id.recyclerTodoItemsList); // finds the recycler view
-    //View row_data = findViewById(R.id.toDoTextView);
 
     if (holder == null) {
       holder = new TodoItemsHolderImpl(recyclerView);
     }
-    
+
     // Create the adapter
-    ToDoAdapterClass adapter = new ToDoAdapterClass();
+    adapter = new ToDoAdapterClass();
     adapter.addTodoListToAdapter(holder.getCurrentItems());
 
     recyclerView.setAdapter(adapter);
@@ -60,21 +61,12 @@ public class MainActivity extends AppCompatActivity {
     adapter.setCheckBoxListener(new ToDoAdapterClass.CheckBoxListener() {
       @Override
       public void OnCheckBox(TodoItem item, boolean isChecked) {
-         // if (item.status.equals("DONE")){
-         //       holder.markItemInProgress(item);
-         // }
-         // else{
-         //     holder.markItemDone(item);
-         // }
-
           if (isChecked){
               holder.markItemDone(item);
           }
           else {
               holder.markItemInProgress(item);
-
           }
-
           adapter.addTodoListToAdapter(holder.getCurrentItems());
       }
     });
@@ -95,12 +87,24 @@ public class MainActivity extends AppCompatActivity {
           ArrayList<TodoItem> list = holder.getCurrentItems();
           adapter.addTodoListToAdapter(list);
           adapter.notifyDataSetChanged();
-         // recyclerView.setAdapter(adapter);
-          //recyclerView.setVisibility(View.VISIBLE);
-          //recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
           textInsertTask.setText("");
         }
     });
+  }
+
+  // flip screen
+  @Override
+  protected void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putSerializable("saved_state", holder.saveState());
+  }
+
+  @Override
+  protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    Serializable saved_output = savedInstanceState.getSerializable("saved_state");
+    holder.loadState(saved_output);
+    adapter.addTodoListToAdapter(holder.getCurrentItems());
   }
 }
 

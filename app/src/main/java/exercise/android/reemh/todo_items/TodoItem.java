@@ -8,16 +8,13 @@ import java.util.Date;
 public class TodoItem implements Serializable {
     protected String desc;
     protected String status;
-    private boolean isDone;
     protected Date createdDate = new Date();
-
 
   // TODO: edit this class as you want
     public TodoItem(String description, String status){
         this.desc = description;
         this.status = status;
         this.createdDate = new Date();
-        isDone = false;
     }
 
     public void setStatus(String status){
@@ -33,5 +30,11 @@ public class TodoItem implements Serializable {
     public Date getCreatedDateAsDate(){
         return new Date(String.valueOf(this.createdDate));
     }
+
+    protected String itemStringRepresentation(){
+        String repr =  this.desc + "/" + this.status + "/" + this.getCreatedDate();
+        return repr;
+    }
+
 
 }

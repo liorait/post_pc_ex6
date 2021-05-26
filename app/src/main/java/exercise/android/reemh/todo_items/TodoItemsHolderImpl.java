@@ -1,5 +1,6 @@
 package exercise.android.reemh.todo_items;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.view.LayoutInflater;
@@ -15,11 +16,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 // TODO: implement!
 public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements TodoItemsHolder{
@@ -28,7 +33,6 @@ public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements Todo
   protected ArrayList<TodoItem> itemsList; // list of todo_ items
   private String IN_PROGRESS = "IN-PROGRESS";
   private String DONE = "DONE";
-  private int index = 0;
   EditText todoText;
   TextView dateTextView;
   CheckBox checkBox;
@@ -144,5 +148,67 @@ public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements Todo
     if (itemsList.contains(item)) {
       this.itemsList.remove(item);
     }
+  }
+
+  private ArrayList<String> saveItemsRepresentation(){
+
+      // goes over the list items and for each item create string representation and save
+      ArrayList<String> itemsStrList = new ArrayList<>();
+
+      for (int i = 0; i < this.itemsList.size(); i++){
+          String itemStr = this.itemsList.get(i).itemStringRepresentation();
+          itemsStrList.add(itemStr);
+      }
+
+      return itemsStrList;
+  }
+
+  @Override
+  public Serializable saveState() {
+      // create new holderState
+      ToDoItemsHolderImplState holder_state = new ToDoItemsHolderImplState();
+
+      // get items representation array list
+      ArrayList<String> itemsStrList = saveItemsRepresentation();
+
+      // save the list into the state
+      holder_state.itemsRepresentationList = itemsStrList;
+
+      return holder_state;
+  }
+
+  private void convertStringListToTodoList(ArrayList<String> listStr) {
+      for (int i = 0; i < listStr.size(); i++)
+      {
+          String val = listStr.get(i);
+          String[] split = val.split("/");
+          String desc = split[0];
+          String status = split[1];
+          String date = split[2];
+
+          // create a new item
+          TodoItem newItem = new TodoItem(desc, status);
+
+        // Date convertedDate = new SimpleDateFormat("E, MMM dd yyyy HH:mm:ss").parse(date);
+
+          newItem.createdDate = new Date(); // todo change to saved date
+          this.itemsList.add(newItem);
+      }
+  }
+
+  @Override
+  public void loadState(Serializable prevState) {
+     if (!(prevState instanceof ToDoItemsHolderImplState)) {
+         return; // ignore
+     }
+     ToDoItemsHolderImplState casted = (ToDoItemsHolderImplState)prevState;
+
+     // convert the represented items list to an ItemTodo list
+     convertStringListToTodoList(casted.itemsRepresentationList);
+  }
+
+  private static class ToDoItemsHolderImplState implements Serializable {
+      private ArrayList<String> itemsRepresentationList;
+      private String newTaskTest;
   }
 }
