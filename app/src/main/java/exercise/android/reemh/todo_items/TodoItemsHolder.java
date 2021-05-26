@@ -16,6 +16,8 @@ public interface TodoItemsHolder {
    */
   void addNewInProgressItem(String description);
 
+  void editItem(TodoItem item, String description);
+
   /** mark the @param item as DONE */
   void markItemDone(TodoItem item);
 

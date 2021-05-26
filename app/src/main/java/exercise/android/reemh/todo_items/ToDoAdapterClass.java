@@ -1,30 +1,25 @@
 package exercise.android.reemh.todo_items;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Paint;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-
-import javax.security.auth.callback.Callback;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ToDoAdapterClass extends RecyclerView.Adapter<TodoItemsHolderImpl>{
 
-    private ArrayList<TodoItem> list;
-
-    public void setOnItemClickCallback(OnItemClickListener onItemClickListener) {
-
-    }
-
-    public interface OnItemClickListener{
-        void OnItemClicked(TodoItem item);
-    }
+    private final ArrayList<TodoItem> list;
 
     public ToDoAdapterClass(){
         this.list = new ArrayList<>();
@@ -45,31 +40,100 @@ public class ToDoAdapterClass extends RecyclerView.Adapter<TodoItemsHolderImpl>{
                 false);
         return new TodoItemsHolderImpl(view);
     }
+
     public DeleteClickListener deleteListener;
+    public EditClickListener editListener;
+    public CheckBoxListener checkBoxListener;
+
+    public void setEditListener(EditClickListener listener){
+        this.editListener = listener;
+    }
 
     public void setDeleteListener(DeleteClickListener listener){
         this.deleteListener = listener;
     }
 
+    public void setCheckBoxListener(CheckBoxListener listener){
+        this.checkBoxListener = listener;
+    }
+
+    public interface EditClickListener{
+        void onEditClick(TodoItem item, String description);
+    }
+
     // Create an interface
     public interface DeleteClickListener{
-       // void onDeleteClick(int position);
         void onDeleteClick(TodoItem item);
     }
+
+    public interface CheckBoxListener{
+        void OnCheckBox(TodoItem item, boolean isChecked);
+    }
+
     @Override
     public void onBindViewHolder(@NonNull TodoItemsHolderImpl holder, int position) {
         TodoItem item = this.list.get(position);
         holder.todoText.setText(item.desc);
         holder.todoText.setEnabled(false);
         holder.dateTextView.setText(item.getCreatedDate());
-        Context to_do_context = holder.todoText.getContext();
+
+        String status =  this.list.get(position).status;
+        if (status.equals("DONE")){
+            holder.todoText.setPaintFlags(holder.todoText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.checkBox.setChecked(true);
+        }
+        else{
+            holder.checkBox.setChecked(false);
+            holder.todoText.setPaintFlags(holder.todoText.getPaintFlags() & Paint.LINEAR_TEXT_FLAG);
+        }
+/**
+        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+               // if (holder.checkBox.isChecked()) {
+                  //   holder.todoText.setPaintFlags(holder.todoText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    //holder.todoText.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+              //  }
+               // else {
+                  //  holder.todoText.setPaintFlags(0);
+               // }
+
+                checkBoxListener.OnCheckBox(item, holder.checkBox.isChecked());
+            }
+        });
+ */
+
+        holder.checkBox.setOnClickListener(v->{
+             // UI
+            //if (holder.checkBox.isChecked()){
+               // holder.todoText.setPaintFlags(holder.todoText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            //    holder.todoText.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+               // holder.checkBox.setChecked(true);
+               // holder.checkBox.setChecked(true);
+               // holder.editBth.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+          //  }
+          //  else {
+
+           //     holder.todoText.setPaintFlags(0);
+          //  }
+
+
+            checkBoxListener.OnCheckBox(item, holder.checkBox.isChecked());
+        });
+
+
+        holder.editDoneBtn.setOnClickListener(v->{
+            holder.editBth.setVisibility(View.VISIBLE);
+            holder.editDoneBtn.setVisibility(View.GONE);
+            holder.todoText.setEnabled(false);
+           // holder.todoText.setText(holder.todoText.getText());
+            editListener.onEditClick(item, holder.todoText.getText().toString());
+        });
 
         holder.deleteButton.setOnClickListener(v -> {
             //deleteListener.onDeleteClick(position);
             this.list.remove(position);
-
             //this.list = holder.getCurrentItems();
-
             //this.addTodoListToAdapter(new ArrayList<>(holder.getCurrentItems()));
             deleteListener.onDeleteClick(item);
         });
@@ -110,15 +174,9 @@ public class ToDoAdapterClass extends RecyclerView.Adapter<TodoItemsHolderImpl>{
             holder.editBth.setVisibility(View.GONE);
             holder.editDoneBtn.setVisibility(View.VISIBLE);
             holder.todoText.setEnabled(true);
-
         });
 
-        holder.editDoneBtn.setOnClickListener(v -> {
-            holder.editBth.setVisibility(View.VISIBLE);
-            holder.editDoneBtn.setVisibility(View.GONE);
-            holder.todoText.setEnabled(false);
-            holder.todoText.setText(holder.todoText.getText());
-        });
+
 
       //  holder.checkBox.setOnClickListener(v->{
        //     if (holder.checkBox.isChecked()){

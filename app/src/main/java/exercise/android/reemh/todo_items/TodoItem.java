@@ -9,7 +9,7 @@ public class TodoItem implements Serializable {
     protected String desc;
     protected String status;
     private boolean isDone;
-    private Date createdDate = null;
+    protected Date createdDate = new Date();
 
 
   // TODO: edit this class as you want
@@ -23,9 +23,15 @@ public class TodoItem implements Serializable {
     public void setStatus(String status){
         this.status = status;
     }
-
+    public void setDescription(String desc){
+        this.desc = desc;
+    }
     public String getCreatedDate(){
         String date = this.createdDate.toString();
         return date;
     }
+    public Date getCreatedDateAsDate(){
+        return new Date(String.valueOf(this.createdDate));
+    }
+
 }

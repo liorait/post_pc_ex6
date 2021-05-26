@@ -1,11 +1,13 @@
 package exercise.android.reemh.todo_items;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
   public TodoItemsHolder holder = null;
 
+  @RequiresApi(api = Build.VERSION_CODES.N)
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -31,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
     if (holder == null) {
       holder = new TodoItemsHolderImpl(recyclerView);
     }
-    MainActivity context = this;
-
+    
     // Create the adapter
     ToDoAdapterClass adapter = new ToDoAdapterClass();
     adapter.addTodoListToAdapter(holder.getCurrentItems());
@@ -47,13 +49,42 @@ public class MainActivity extends AppCompatActivity {
     EditText textInsertTask = findViewById(R.id.editTextInsertTask);
     FloatingActionButton buttonAddToDoItem = findViewById(R.id.buttonCreateTodoItem);
 
-   adapter.setDeleteListener(new ToDoAdapterClass.DeleteClickListener() {
-     @Override
-     public void onDeleteClick(TodoItem item) {
-       holder.deleteItem(item);
-       adapter.addTodoListToAdapter(holder.getCurrentItems());
-     }
-   });
+    adapter.setDeleteListener(new ToDoAdapterClass.DeleteClickListener() {
+      @Override
+      public void onDeleteClick(TodoItem item) {
+        holder.deleteItem(item);
+        adapter.addTodoListToAdapter(holder.getCurrentItems());
+      }
+    });
+
+    adapter.setCheckBoxListener(new ToDoAdapterClass.CheckBoxListener() {
+      @Override
+      public void OnCheckBox(TodoItem item, boolean isChecked) {
+         // if (item.status.equals("DONE")){
+         //       holder.markItemInProgress(item);
+         // }
+         // else{
+         //     holder.markItemDone(item);
+         // }
+
+          if (isChecked){
+              holder.markItemDone(item);
+          }
+          else {
+              holder.markItemInProgress(item);
+
+          }
+
+          adapter.addTodoListToAdapter(holder.getCurrentItems());
+      }
+    });
+
+    adapter.setEditListener(new ToDoAdapterClass.EditClickListener() {
+      @Override
+      public void onEditClick(TodoItem item, String desc) {
+        holder.editItem(item, desc);
+      }
+    });
 
     buttonAddToDoItem.setOnClickListener(v -> {
         String textInsertTaskStr = textInsertTask.getText().toString();
