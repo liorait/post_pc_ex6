@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-// TODO: implement!
+
 public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements TodoItemsHolder{
   // a class that shows one view
 
@@ -41,10 +41,6 @@ public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements Todo
   Button deleteButton;
 
 
-
-
- // private View view = null;
-
   public TodoItemsHolderImpl(View view){
     super(view);
     this.itemsList = new ArrayList<>();
@@ -58,27 +54,8 @@ public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements Todo
     deleteButton = view.findViewById(R.id.deleteButton);
   }
 
- // @RequiresApi(api = Build.VERSION_CODES.N)
   @Override
   public ArrayList<TodoItem> getCurrentItems() {
-    /**
-    this.itemsList.sort(new Comparator<TodoItem>() {
-      @Override
-      public int compare(TodoItem o1, TodoItem o2) {
-       // return o1.status.compareTo(o2.status);
-        if (o1.status.equals("DONE") && o2.status.equals("IN_PROGRESS")){
-          return 1;
-        }
-        else if(o2.status.equals("DONE") && o1.status.equals("IN_PROGRESS")){
-          return -1;
-        }
-        else{
-          return 0; // equals
-        }
-       // return o2.getCreatedDate().compareTo(o1.getCreatedDate());
-      }
-    });
-     */
     return this.itemsList; }
 
 
@@ -136,7 +113,6 @@ public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements Todo
 
   @Override
   public void editItem(TodoItem item, String description){
-   // item.setDescription(description);
     if (itemsList.contains(item)) {
       int index = itemsList.indexOf(item);
       itemsList.get(index).setDescription(description);
@@ -151,7 +127,6 @@ public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements Todo
   }
 
   private ArrayList<String> saveItemsRepresentation(){
-
       // goes over the list items and for each item create string representation and save
       ArrayList<String> itemsStrList = new ArrayList<>();
 
@@ -191,7 +166,7 @@ public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements Todo
 
         // Date convertedDate = new SimpleDateFormat("E, MMM dd yyyy HH:mm:ss").parse(date);
 
-          newItem.createdDate = new Date(); // todo change to saved date
+          newItem.createdDate = new Date();
           this.itemsList.add(newItem);
       }
   }
@@ -202,7 +177,6 @@ public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements Todo
          return; // ignore
      }
      ToDoItemsHolderImplState casted = (ToDoItemsHolderImplState)prevState;
-
      // convert the represented items list to an ItemTodo list
      convertStringListToTodoList(casted.itemsRepresentationList);
   }

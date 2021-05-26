@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
   public TodoItemsHolder holder = null;
   public ToDoAdapterClass adapter = null;
   @RequiresApi(api = Build.VERSION_CODES.N)
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -43,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(this,
             RecyclerView.VERTICAL, false));
-
 
     // TODO: implement the specs as defined below
     //    (find all UI components, hook them up, connect everything you need)
