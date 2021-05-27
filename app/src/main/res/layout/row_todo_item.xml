@@ -22,7 +22,7 @@
         android:singleLine="false"
         app:layout_constraintBottom_toTopOf="@+id/createdDateTextView"
         android:text="TextView"
-
+        android:layout_marginLeft="20dp"
         android:textSize="20sp"
         android:textStyle="bold"
         app:drawableBottomCompat="@color/black"
