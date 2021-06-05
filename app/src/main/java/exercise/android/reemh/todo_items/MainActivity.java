@@ -3,43 +3,87 @@ package exercise.android.reemh.todo_items;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
   public TodoItemsHolder holder = null;
   public ToDoAdapterClass adapter = null;
-  @RequiresApi(api = Build.VERSION_CODES.N)
+  public LocalDataBase dataBase = null;
+  private BroadcastReceiver recieverdbchanges;
 
+  @RequiresApi(api = Build.VERSION_CODES.N)
+// todo every time the db edots or delete send broadcast and recive it here and get thedata again
+  // todo for broadcast need context and not using singelton
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     RecyclerView recyclerView = findViewById(R.id.recyclerTodoItemsList); // finds the recycler view
+    adapter = new ToDoAdapterClass(this);
+
+  // todo write this code from each activity
+    if (dataBase == null){
+      dataBase = ToDoItemsApplication.getInstance().getDataBase();
+    }
+    //ArrayList<TodoItem> items = null;
+    dataBase.publicLiveData.observe(this, new Observer<List<TodoItem>>() {
+      @Override
+      public void onChanged(List<TodoItem> todoItems) {
+        if(todoItems.size() == 0){
+           adapter.addTodoListToAdapter(new ArrayList<>());
+        }
+        else{
+          //items = new ArrayList<TodoItem>(todoItems);
+        //  adapter.addTodoListToAdapter((ArrayList<TodoItem>) todoItems);
+          adapter.addTodoListToAdapter(new ArrayList<>(todoItems));
+          adapter.notifyDataSetChanged();
+        }
+      }
+    });
 
     if (holder == null) {
       holder = new TodoItemsHolderImpl(recyclerView);
     }
+    ArrayList<TodoItem> items = dataBase.getCopies();
+    //recieverdbchanges = new BroadcastReceiver() {
+      //@Override
+      //public void onReceive(Context context, Intent intent) {
+       // if (intent.getAction().equals("changed_db")){
+          // get new list from db
+         // ArrayList<TodoItem> new_items = dataBase.getCopies();
+
+          // refresh the UI
+
+        //}
+     // }
+    //};
+
+    //registerReceiver(recieverdbchanges, new IntentFilter("changed_db"));
+
 
     // Create the adapter
-    adapter = new ToDoAdapterClass();
-    adapter.addTodoListToAdapter(holder.getCurrentItems());
+  //  adapter = new ToDoAdapterClass(this);
+    // todo change recieve items from db
+    //adapter.addTodoListToAdapter(holder.getCurrentItems());
+    adapter.addTodoListToAdapter(items);
 
     recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(this,
@@ -53,8 +97,10 @@ public class MainActivity extends AppCompatActivity {
     adapter.setDeleteListener(new ToDoAdapterClass.DeleteClickListener() {
       @Override
       public void onDeleteClick(TodoItem item) {
-        holder.deleteItem(item);
-        adapter.addTodoListToAdapter(holder.getCurrentItems());
+       // holder.deleteItem(item);
+        dataBase.deleteItem(item.getId());
+
+      //  adapter.addTodoListToAdapter(dataBase.getCopies());
       }
     });
 
@@ -62,19 +108,45 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public void OnCheckBox(TodoItem item, boolean isChecked) {
           if (isChecked){
-              holder.markItemDone(item);
+             // holder.markItemDone(item);
+             dataBase.markAsDone(item.getId());
           }
           else {
-              holder.markItemInProgress(item);
+             // holder.markItemInProgress(item);
+              dataBase.markAsInProgress(item.getId());
           }
-          adapter.addTodoListToAdapter(holder.getCurrentItems());
+          adapter.addTodoListToAdapter(dataBase.getCopies());
+         //adapter.addTodoListToAdapter(holder.getCurrentItems());
+      }
+    });
+
+
+    adapter.setEditOptionMenuListener(new ToDoAdapterClass.EditOptionListener() {
+      @Override
+      public void onEditOption(int position) {
+        TodoItem item = holder.getCurrentItems().get(position);
+       // holder.editItem(item, item.desc);
+        System.out.println("here");
       }
     });
 
     adapter.setEditListener(new ToDoAdapterClass.EditClickListener() {
       @Override
-      public void onEditClick(TodoItem item, String desc) {
-        holder.editItem(item, desc);
+     // public void onEditClick(TodoItem item, String desc) {
+       // holder.editItem(item, desc);
+     // }
+
+      public void onEditClick(TodoItem item) {
+
+        // open edit activity screen
+        Intent editIntent = new Intent(MainActivity.this, EditActivity.class);
+
+        // put the relevant data into the intent
+        editIntent.putExtra("id", item.getId());
+        startActivity(editIntent);
+
+
+       // holder.editItem(item);
       }
     });
 
@@ -83,14 +155,24 @@ public class MainActivity extends AppCompatActivity {
 
         // If the text isn't empty, creates a new todo_ object
         if (!textInsertTaskStr.equals("")){
-          holder.addNewInProgressItem(textInsertTaskStr);
-          ArrayList<TodoItem> list = holder.getCurrentItems();
+         // holder.addNewInProgressItem(textInsertTaskStr);
+          dataBase.addItem(textInsertTaskStr, "IN_PROGRESS");
+         // ArrayList<TodoItem> list = holder.getCurrentItems();
+          ArrayList<TodoItem> list = dataBase.getCopies();
           adapter.addTodoListToAdapter(list);
           adapter.notifyDataSetChanged();
           textInsertTask.setText("");
         }
     });
   }
+/**
+  @Override
+  protected void onDestroy() {
+    unregisterReceiver(recieverdbchanges);
+    super.onDestroy();
+
+  }
+  */
 
   // flip screen
   @Override
@@ -99,12 +181,19 @@ public class MainActivity extends AppCompatActivity {
     outState.putSerializable("saved_state", holder.saveState());
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.N)
   @Override
   protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
     super.onRestoreInstanceState(savedInstanceState);
     Serializable saved_output = savedInstanceState.getSerializable("saved_state");
-    holder.loadState(saved_output);
-    adapter.addTodoListToAdapter(holder.getCurrentItems());
+    try {
+      holder.loadState(saved_output);
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+    // todo chang get items from db
+    adapter.addTodoListToAdapter(dataBase.getCopies());
+   // adapter.addTodoListToAdapter(holder.getCurrentItems());
   }
 }
 

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/createdDateDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Created date: "
+        app:layout_constraintHorizontal_bias="0.198"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextDescription" />
+
+    <TextView
+        android:id="@+id/createdDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Created date: "
+        app:layout_constraintHorizontal_bias="0.708"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextDescription" />
+
+    <TextView
+        android:id="@+id/lastModifiedDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Last modified: "
+        app:layout_constraintHorizontal_bias="0.201"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/createdDateTextView" />
+
+    <TextView
+        android:id="@+id/lastModifiedtextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Last modified: "
+        app:layout_constraintHorizontal_bias="0.708"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/createdDateTextView" />
+
+    <TextView
+        android:id="@+id/statusDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status: "
+        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lastModifiedtextView" />
+
+
+
+
+    <TextView
+        android:id="@+id/statustextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status: "
+        app:layout_constraintHorizontal_bias="0.681"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lastModifiedtextView" />
+
+    <EditText
+        android:id="@+id/editTextDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="New Description.."
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        app:layout_constraintLeft_toRightOf="@id/statustextView"
+        app:layout_constraintTop_toBottomOf="@id/lastModifiedtextView"
+        android:id="@+id/checkBoxChangeStatus"
+        android:layout_width="36dp"
+        android:layout_height="15dp"
+        android:text="CheckBox"
+        tools:layout_editor_absoluteX="305dp"
+        tools:layout_editor_absoluteY="87dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,7 +40,9 @@ public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements Todo
   CheckBox checkBox;
   Button editBth;
   Button editDoneBtn;
-  Button deleteButton;
+  TextView deleteButton;
+  //Button buttonViewOption;
+  TextView buttonViewOption;
 
 
   public TodoItemsHolderImpl(View view){
@@ -52,6 +56,7 @@ public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements Todo
     editBth = view.findViewById(R.id.editButton);
     editDoneBtn = view.findViewById(R.id.editDoneBtn);
     deleteButton = view.findViewById(R.id.deleteButton);
+    buttonViewOption = view.findViewById(R.id.buttonViewOption);
   }
 
   @Override
@@ -64,64 +69,69 @@ public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements Todo
    */
   @Override
   public void addNewInProgressItem(String description) {
-    TodoItem newItem = new TodoItem(description, IN_PROGRESS);
-    this.itemsList.add(0, newItem);
-    System.out.println("list after add" + this.itemsList.toString());
+   // TodoItem newItem = new TodoItem(  description, IN_PROGRESS);
+    //this.itemsList.add(0, newItem);
   }
 
   @Override
   public void markItemDone(TodoItem item) {
+      /**
     if (itemsList.contains(item)) {
       int index = itemsList.indexOf(item);
       itemsList.get(index).setStatus(DONE);
 
       // move to the bottom of the list
-      TodoItem temp = new TodoItem(item.desc, item.status);
+      TodoItem temp = new TodoItem(item.getDescription(), item.getStatus());
       Date date = item.getCreatedDateAsDate();
       this.itemsList.remove(item);
       this.itemsList.add(this.itemsList.size(), temp);
-      temp.createdDate = date;
-    }
+      temp.setCreatedDate(date);
+    }*/
   }
 
   @RequiresApi(api = Build.VERSION_CODES.N)
   @Override
   public void markItemInProgress(TodoItem item) {
+      /**
     if (itemsList.contains(item)) {
       int index = itemsList.indexOf(item);
       itemsList.get(index).setStatus(IN_PROGRESS);
 
       // move to the start
-      TodoItem temp = new TodoItem(item.desc, item.status);
+      TodoItem temp = new TodoItem(item.getDescription(), item.getStatus());
       Date date = item.getCreatedDateAsDate();
+
       this.itemsList.remove(item);
       this.itemsList.add(0, temp);
-      temp.createdDate = date;
+      temp.setCreatedDate(date);
       this.itemsList.sort(new Comparator<TodoItem>() {
           @Override
           public int compare(TodoItem o1, TodoItem o2) {
-              if (o1.status.equals(IN_PROGRESS) && o2.status.equals(IN_PROGRESS)) {
+              if (o1.getStatus().equals(IN_PROGRESS) && o2.getStatus().equals(IN_PROGRESS)) {
                   return o2.getCreatedDate().compareTo(o1.getCreatedDate());
               }
+
               return 0;
           }
       });
-    }
+    }*/
   }
 
   @Override
   public void editItem(TodoItem item, String description){
+      /**
     if (itemsList.contains(item)) {
       int index = itemsList.indexOf(item);
       itemsList.get(index).setDescription(description);
-    }
+    }*/
   }
 
   @Override
   public void deleteItem(TodoItem item) {
+      /**
     if (itemsList.contains(item)) {
       this.itemsList.remove(item);
-    }
+    }*/
   }
 
   private ArrayList<String> saveItemsRepresentation(){
@@ -150,27 +160,31 @@ public class TodoItemsHolderImpl extends RecyclerView.ViewHolder implements Todo
       return holder_state;
   }
 
-  private void convertStringListToTodoList(ArrayList<String> listStr) {
+  private void convertStringListToTodoList(ArrayList<String> listStr) throws ParseException {
       for (int i = 0; i < listStr.size(); i++)
       {
+          /**
           String val = listStr.get(i);
           String[] split = val.split("/");
           String desc = split[0];
           String status = split[1];
-          String date = split[2];
+          String date = split[2];*/
 
           // create a new item
-          TodoItem newItem = new TodoItem(desc, status);
-
+          TodoItem newItem = TodoItem.stringToToDoItem(listStr.get(i));
+         // System.out.println("string format: " + date);
         // Date convertedDate = new SimpleDateFormat("E, MMM dd yyyy HH:mm:ss").parse(date);
+          //long convertedDate = Date.parse(date);
+          SimpleDateFormat convertedDate = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+          Date date1 = convertedDate.parse(newItem.getCreatedDate());
 
-          newItem.createdDate = new Date();
+          newItem.setCreatedDate(date1);
           this.itemsList.add(newItem);
       }
   }
 
   @Override
-  public void loadState(Serializable prevState) {
+  public void loadState(Serializable prevState) throws ParseException {
      if (!(prevState instanceof ToDoItemsHolderImplState)) {
          return; // ignore
      }

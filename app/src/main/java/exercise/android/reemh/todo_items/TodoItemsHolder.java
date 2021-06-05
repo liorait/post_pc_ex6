@@ -1,6 +1,7 @@
 package exercise.android.reemh.todo_items;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,5 +33,5 @@ public interface TodoItemsHolder {
   Serializable saveState();
 
   /** load state */
-  void loadState(Serializable prevState);
+  void loadState(Serializable prevState) throws ParseException;
 }
