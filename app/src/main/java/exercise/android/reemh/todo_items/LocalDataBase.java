@@ -27,8 +27,10 @@ public class LocalDataBase {
     public final LiveData<List<TodoItem>> publicLiveData = mutableLiveData;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public LocalDataBase(Context context){
         this.context = context;
+        sortItems();
         this.sp = context.getSharedPreferences("local_db_todo_items", Context.MODE_PRIVATE);
         initializeSp();
     }

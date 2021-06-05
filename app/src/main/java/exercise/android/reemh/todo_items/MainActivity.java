@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
   // todo write this code from each activity
     if (dataBase == null){
       dataBase = ToDoItemsApplication.getInstance().getDataBase();
+      dataBase.getCopies();
     }
     //ArrayList<TodoItem> items = null;
     dataBase.publicLiveData.observe(this, new Observer<List<TodoItem>>() {

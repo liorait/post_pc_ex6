@@ -110,9 +110,9 @@ public class ToDoAdapterClass extends RecyclerView.Adapter<TodoItemsHolderImpl>{
         });
 
         holder.editDoneBtn.setOnClickListener(v->{
-            holder.editBth.setVisibility(View.VISIBLE);
-            holder.editDoneBtn.setVisibility(View.GONE);
-            holder.todoText.setEnabled(false);
+         //   holder.editBth.setVisibility(View.VISIBLE);
+           // holder.editDoneBtn.setVisibility(View.GONE);
+            //holder.todoText.setEnabled(false);
 
             //editListener.onEditClick(item, holder.todoText.getText().toString());
         });
@@ -123,8 +123,8 @@ public class ToDoAdapterClass extends RecyclerView.Adapter<TodoItemsHolderImpl>{
         });
 
         holder.editBth.setOnClickListener(v -> {
-            holder.editBth.setVisibility(View.GONE);
-            holder.editDoneBtn.setVisibility(View.VISIBLE);
+           // holder.editBth.setVisibility(View.GONE);
+            //holder.editDoneBtn.setVisibility(View.VISIBLE);
            // holder.todoText.setEnabled(true);
             editListener.onEditClick(item); // todo move to on item click
         });
