@@ -18,9 +18,11 @@ import androidx.annotation.RequiresApi;
 
 import org.mockito.internal.matchers.Null;
 
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class EditActivity extends Activity {
@@ -48,7 +50,6 @@ public class EditActivity extends Activity {
 
         items = dataBase.getCopies();
         Intent openIntent = getIntent();
-       // String itemId = null;
         TodoItem currentItem = null;
 
         if (openIntent.hasExtra("id")){
@@ -68,11 +69,20 @@ public class EditActivity extends Activity {
             editText.setText(currentItem.getDescription()); // Set the current text. Enables to edit the text
             createdDate.setText(currentItem.getCreatedDate());
 
-            @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
-            Date lastModified = new Date();
+           // @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
+           // Date lastModified = currentItem.getLastModifiedDateAsDate();
+         //   String lastModifiedStr = currentItem.getLastModifiedDate();
+          //  Date lastModified = dataBase.getById(itemId).getLastModifiedDateAsDate();
+            Date lastModified = currentItem.getLastModifiedDateAsDate();
+            if (lastModified != null){
+                Date currentDate = new Date();
+                String result = getTimeDifference(currentDate, lastModified);
+                lastModifiedView.setText(result);
+            }
 
-            lastModifiedView.setText(dateFormat.format(lastModified)); // todo change
-            statusView.setText(currentItem.getStatus()); // todo make gettes settrs to item
+           // lastModifiedView.setText(dateFormat.format(lastModified));
+            //lastModifiedView.setText(lastModifiedStr);
+            statusView.setText(currentItem.getStatus());
 
             if (currentItem.getStatus().equals("IN_PROGRESS")){
                 checkBoxStatus.setChecked(false);
@@ -99,6 +109,17 @@ public class EditActivity extends Activity {
                 String changedText = editText.getText().toString();
                 String itemId = openIntent.getStringExtra("id");
                 dataBase.editDescription(itemId, changedText);
+                dataBase.editLastModifiedDate(itemId, new Date());
+
+                // show the last modified date on screen
+                // show the last modified date on screen
+                Date lastModified = dataBase.getById(itemId).getLastModifiedDateAsDate();
+
+                if (lastModified != null) {
+                    Date currentDate = new Date();
+                    String result = getTimeDifference(currentDate, lastModified);
+                    lastModifiedView.setText(result);
+                }
             }
         });
         checkBoxStatus.setOnClickListener(v -> {
@@ -107,12 +128,59 @@ public class EditActivity extends Activity {
             if (checkBoxStatus.isChecked()){
                 statusView.setText("DONE");
                 dataBase.markAsDone(itemId);
+                dataBase.editLastModifiedDate(itemId, new Date());
+
+                // show the last modified date on screen
+                Date lastModified = dataBase.getById(itemId).getLastModifiedDateAsDate();
+                if (lastModified != null) {
+                    Date currentDate = new Date();
+                    String result = getTimeDifference(currentDate, lastModified);
+                    lastModifiedView.setText(result);
+                }
             }
             else{
                 statusView.setText("IN_PROGRESS");
                 dataBase.markAsInProgress(itemId);
+                dataBase.editLastModifiedDate(itemId, new Date());
+
+                // show the last modified date on screen
+                Date lastModified = dataBase.getById(itemId).getLastModifiedDateAsDate();
+                if (lastModified != null) {
+                    Date currentDate = new Date();
+                    String result = getTimeDifference(currentDate, lastModified);
+                    lastModifiedView.setText(result);
+                }
             }
         });
+    }
+    private String getTimeDifference(Date currentDate, Date lastModified){
+
+        long difference_mili = currentDate.getTime() - lastModified.getTime(); // miliseconds
+        long difference_seconds = (difference_mili/1000) % 60;
+        long difference_minutes = (difference_mili/(1000 * 60)) % 60;
+        long difference_hours = (difference_mili/(1000 * 60 * 60)) % 24;
+        long difference_years = (difference_mili / (1000L * 60 * 60 * 24 * 365));
+        long difference_days = (difference_mili / (1000 * 60 * 60 * 24)) % 365;
+
+        // was less than a hour ago
+        if (difference_years == 0 && difference_days == 0 && difference_hours == 0 && ((difference_minutes <= 60) || (difference_seconds <=60))){
+            return difference_minutes + " minutes ago";
+        }
+        // was earlier than a hour, but today
+        else if (difference_years == 0 && difference_days == 0 && difference_hours != 0){
+            long hours = lastModified.getHours();
+            long minutes = lastModified.getMinutes();
+            String time = hours+":"+minutes;
+            return "Today at " + time;
+        }
+        // was yesterday or earlier
+        else if (difference_years == 0 && difference_days != 0){
+            long hours = lastModified.getHours();
+            long minutes = lastModified.getMinutes();
+            String time = hours+":"+minutes;
+            return lastModified.toString() + " at " + time;
+        }
+       return null;
     }
 
 }

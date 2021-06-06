@@ -15,8 +15,6 @@ public class TodoItem implements Serializable {
     private String itemId;
     private Date createdDate = null;
     private Date lastModifiedDate = null;
-    /// protected String createdDate;
-
 
     // TODO: edit this class as you want
     public TodoItem(String id, String description, String status) {
@@ -24,9 +22,7 @@ public class TodoItem implements Serializable {
         this.status = status;
         this.createdDate = new Date();
         this.itemId = id;
-
-        //  DateFormat dateFormat = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
-        // this.createdDate = dateFormat.format(this.createdDate); // convert date to string
+        this.lastModifiedDate = new Date();
     }
 
     public void setStatus(String status) {
@@ -36,7 +32,6 @@ public class TodoItem implements Serializable {
     public void setDescription(String desc) {
         this.desc = desc;
     }
-
 
     public String getId() {
         return itemId;
@@ -54,16 +49,26 @@ public class TodoItem implements Serializable {
         this.createdDate = date;
     }
 
+    public void setLastModifiedDate(Date date) {
+        this.lastModifiedDate = date;
+    }
+
     public void setId(String id) {
         this.itemId = id;
     }
 
     public String getCreatedDate() {
-        // String date = this.createdDate.toString();
         @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
-        //   @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
         return dateFormat.format(this.createdDate);
-        //return this.createdDate;
+    }
+
+    public String getLastModifiedDate(){
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
+        return dateFormat.format(this.lastModifiedDate);
+    }
+
+    public Date getLastModifiedDateAsDate(){
+        return new Date(String.valueOf(this.lastModifiedDate));
     }
 
     public Date getCreatedDateAsDate() {
@@ -71,7 +76,8 @@ public class TodoItem implements Serializable {
     }
 
     protected String itemStringRepresentation() {
-        String repr = this.itemId + "/" +  this.desc + "/" + this.status + "/" + this.getCreatedDate();
+        String repr = this.itemId + "/" +  this.desc + "/" + this.status + "/" + this.getCreatedDate()
+                + "/" + this.getLastModifiedDate();
         return repr;
     }
 
@@ -83,13 +89,16 @@ public class TodoItem implements Serializable {
             String id = split[0];
             String desc = split[1];
             String status = split[2];
-            String date = split[3];
+            String createdDate = split[3];
+            String lastModifiedDate = split[4];
 
             // create a new item
             TodoItem newItem = new TodoItem(id, desc, status);
             SimpleDateFormat convertedDate = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
-            Date date1 = convertedDate.parse(date);
+            Date date1 = convertedDate.parse(createdDate);
+            Date date2 = convertedDate.parse(lastModifiedDate);
             newItem.setCreatedDate(date1);
+            newItem.setLastModifiedDate(date2);
             return newItem;
         } catch (Exception e) {
             System.out.println("exception: " + e.toString() + "input: " + stringRepr);

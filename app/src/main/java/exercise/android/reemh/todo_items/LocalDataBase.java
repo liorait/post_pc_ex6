@@ -22,10 +22,8 @@ public class LocalDataBase {
     private final ArrayList<TodoItem> items = new ArrayList<>();
     private final Context context;
     private final SharedPreferences sp;
-
     private final MutableLiveData<List<TodoItem>> mutableLiveData = new MutableLiveData<>();
     public final LiveData<List<TodoItem>> publicLiveData = mutableLiveData;
-
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public LocalDataBase(Context context){
@@ -60,12 +58,11 @@ public class LocalDataBase {
         String newId = UUID.randomUUID().toString();
         TodoItem newItem = new TodoItem(newId, description, state);
         items.add(0, newItem);
-
         sortItems();
 
         // update sp of the changes
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString(newItem.getId(), newItem.itemStringRepresentation()); // todo parser string of to do item and save
+        editor.putString(newItem.getId(), newItem.itemStringRepresentation());
         editor.apply();
 
         // update the live data of the changed
@@ -157,10 +154,27 @@ public class LocalDataBase {
 
         TodoItem newItem = new TodoItem(itemToEdit.getId(), newDescription, itemToEdit.getStatus());
         newItem.setCreatedDate(itemToEdit.getCreatedDateAsDate());
-        newItem.setId(itemToEdit.getId());
+        //newItem.setId(itemToEdit.getId());
         items.add(newItem); // add depend on status 0 or size
         items.remove(itemToEdit);
         // todo sort?
+
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString(newItem.getId(), newItem.itemStringRepresentation());
+        editor.apply();
+        mutableLiveData.setValue(new ArrayList<>(items));
+        sendBroadcastDbChanged();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void editLastModifiedDate(String itemId, Date date){
+        TodoItem itemToEdit = getById(itemId);
+        if (itemToEdit == null) return;
+        TodoItem newItem = new TodoItem(itemToEdit.getId(), itemToEdit.getDescription(), itemToEdit.getStatus());
+        newItem.setCreatedDate(itemToEdit.getCreatedDateAsDate());
+        newItem.setLastModifiedDate(date);
+        items.add(newItem);
+        items.remove(itemToEdit);
 
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(newItem.getId(), newItem.itemStringRepresentation());
