@@ -90,10 +90,7 @@ public class ToDoAdapterClass extends RecyclerView.Adapter<TodoItemsHolderImpl>{
         TodoItem item = this.list.get(position);
         holder.todoText.setText(item.getDescription());
         holder.todoText.setEnabled(false);
-    //    holder.dateTextView.setText(holder.dateTextView.getText() + " " +  item.getCreatedDate());
         holder.dateTextView.setText(item.getCreatedDate());
-       // Context context =
-
 
         String status =  this.list.get(position).getStatus();
         if (status.equals("DONE")){
@@ -110,11 +107,6 @@ public class ToDoAdapterClass extends RecyclerView.Adapter<TodoItemsHolderImpl>{
         });
 
         holder.editDoneBtn.setOnClickListener(v->{
-         //   holder.editBth.setVisibility(View.VISIBLE);
-           // holder.editDoneBtn.setVisibility(View.GONE);
-            //holder.todoText.setEnabled(false);
-
-            //editListener.onEditClick(item, holder.todoText.getText().toString());
         });
 
         holder.deleteButton.setOnClickListener(v -> {
@@ -123,17 +115,12 @@ public class ToDoAdapterClass extends RecyclerView.Adapter<TodoItemsHolderImpl>{
         });
 
         holder.editBth.setOnClickListener(v -> {
-           // holder.editBth.setVisibility(View.GONE);
-            //holder.editDoneBtn.setVisibility(View.VISIBLE);
-           // holder.todoText.setEnabled(true);
-            editListener.onEditClick(item); // todo move to on item click
+            editListener.onEditClick(item);
         });
 
         holder.todoText.setOnClickListener(v ->{
-            System.out.println("clicked");
+           // System.out.println("clicked");
             editListener.onEditClick(item);
-
-            // todo pass intent to second activity with the id or the object
         });
 
         holder.buttonViewOption.setOnClickListener(new View.OnClickListener() {
@@ -143,7 +130,6 @@ public class ToDoAdapterClass extends RecyclerView.Adapter<TodoItemsHolderImpl>{
 
                 //creating a popup menu
                 PopupMenu popup = new PopupMenu(mContext, holder.buttonViewOption);
-               // PopupMenu p = new PopupMenu(holder.buttonViewOption)
 
                 //inflating menu from xml resource
                 popup.inflate(R.menu.options_menu);
@@ -153,11 +139,6 @@ public class ToDoAdapterClass extends RecyclerView.Adapter<TodoItemsHolderImpl>{
                     public boolean onMenuItemClick(MenuItem item_menu) {
                         switch (item_menu.getItemId()) {
                             case R.id.edit_settings:
-                               // editListener.onEditClick(item, item.getContentDescription().toString());
-                              //  System.out.println("hey");
-                              ///  holder.editOption();
-                                // todo should open a new activity window
-                               // TodoItem itemEdit = holder.getCurrentItems().get(position);
                                 editOptionListener.onEditOption(position);
                                 return true;
                                 //handle menu1 click

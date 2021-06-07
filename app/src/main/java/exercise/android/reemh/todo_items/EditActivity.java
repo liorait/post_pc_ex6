@@ -69,10 +69,6 @@ public class EditActivity extends Activity {
             editText.setText(currentItem.getDescription()); // Set the current text. Enables to edit the text
             createdDate.setText(currentItem.getCreatedDate());
 
-           // @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
-           // Date lastModified = currentItem.getLastModifiedDateAsDate();
-         //   String lastModifiedStr = currentItem.getLastModifiedDate();
-          //  Date lastModified = dataBase.getById(itemId).getLastModifiedDateAsDate();
             Date lastModified = currentItem.getLastModifiedDateAsDate();
             if (lastModified != null){
                 Date currentDate = new Date();
@@ -80,8 +76,6 @@ public class EditActivity extends Activity {
                 lastModifiedView.setText(result);
             }
 
-           // lastModifiedView.setText(dateFormat.format(lastModified));
-            //lastModifiedView.setText(lastModifiedStr);
             statusView.setText(currentItem.getStatus());
 
             if (currentItem.getStatus().equals("IN_PROGRESS")){
@@ -111,7 +105,6 @@ public class EditActivity extends Activity {
                 dataBase.editDescription(itemId, changedText);
                 dataBase.editLastModifiedDate(itemId, new Date());
 
-                // show the last modified date on screen
                 // show the last modified date on screen
                 Date lastModified = dataBase.getById(itemId).getLastModifiedDateAsDate();
 
@@ -153,7 +146,7 @@ public class EditActivity extends Activity {
             }
         });
     }
-    private String getTimeDifference(Date currentDate, Date lastModified){
+    public String getTimeDifference(Date currentDate, Date lastModified){
 
         long difference_mili = currentDate.getTime() - lastModified.getTime(); // miliseconds
         long difference_seconds = (difference_mili/1000) % 60;

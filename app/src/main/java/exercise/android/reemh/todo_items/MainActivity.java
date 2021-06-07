@@ -20,6 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView = findViewById(R.id.recyclerTodoItemsList); // finds the recycler view
     adapter = new ToDoAdapterClass(this);
 
-  // todo write this code from each activity
     if (dataBase == null){
       dataBase = ToDoItemsApplication.getInstance().getDataBase();
       dataBase.getCopies();
@@ -61,17 +61,12 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<TodoItem> items = dataBase.getCopies();
 
     // Create the adapter
-  //  adapter = new ToDoAdapterClass(this);
-    // todo change recieve items from db
-    //adapter.addTodoListToAdapter(holder.getCurrentItems());
     adapter.addTodoListToAdapter(items);
 
     recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(this,
             RecyclerView.VERTICAL, false));
 
-    // TODO: implement the specs as defined below
-    //    (find all UI components, hook them up, connect everything you need)
     EditText textInsertTask = findViewById(R.id.editTextInsertTask);
     FloatingActionButton buttonAddToDoItem = findViewById(R.id.buttonCreateTodoItem);
 
@@ -88,9 +83,11 @@ public class MainActivity extends AppCompatActivity {
       public void OnCheckBox(TodoItem item, boolean isChecked) {
           if (isChecked){
              dataBase.markAsDone(item.getId());
+             dataBase.editLastModifiedDate(item.getId(), new Date());  // todo check
           }
           else {
               dataBase.markAsInProgress(item.getId());
+              dataBase.editLastModifiedDate(item.getId(), new Date());  //todo check
           }
           adapter.addTodoListToAdapter(dataBase.getCopies());
       }

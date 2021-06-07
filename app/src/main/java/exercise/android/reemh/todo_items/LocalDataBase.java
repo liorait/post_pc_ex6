@@ -154,10 +154,8 @@ public class LocalDataBase {
 
         TodoItem newItem = new TodoItem(itemToEdit.getId(), newDescription, itemToEdit.getStatus());
         newItem.setCreatedDate(itemToEdit.getCreatedDateAsDate());
-        //newItem.setId(itemToEdit.getId());
         items.add(newItem); // add depend on status 0 or size
         items.remove(itemToEdit);
-        // todo sort?
 
         SharedPreferences.Editor editor = sp.edit();
         editor.putString(newItem.getId(), newItem.itemStringRepresentation());
